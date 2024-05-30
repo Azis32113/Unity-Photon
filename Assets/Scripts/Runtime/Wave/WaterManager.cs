@@ -1,5 +1,4 @@
 using Fusion;
-using UnityEditorInternal.Profiling;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
