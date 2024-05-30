@@ -4,27 +4,19 @@ namespace LowPolyWater
 {
     public class LowPolyWater : MonoBehaviour
     {
-        public static LowPolyWater Instance;
-        public float amplitude = 1f;
         public float waveHeight = 0.5f;
         public float waveFrequency = 0.5f;
         public float waveLength = 0.75f;
 
         //Position where the waves originate from
         public Vector3 waveOriginPosition = new Vector3(0.0f, 0.0f, 0.0f);
-        float offset = 0;
+
         MeshFilter meshFilter;
         Mesh mesh;
         Vector3[] vertices;
 
         private void Awake()
         {
-            if (Instance == null) {
-                Instance = this;
-            }
-            else {
-                Destroy(this);
-            }
             //Get the Mesh Filter of the gameobject
             meshFilter = GetComponent<MeshFilter>();
         }
@@ -71,7 +63,6 @@ namespace LowPolyWater
         
         void Update()
         {
-            offset += Time.deltaTime * waveFrequency;
             GenerateWaves();
         }
 
@@ -105,11 +96,6 @@ namespace LowPolyWater
             mesh.RecalculateNormals();
             mesh.MarkDynamic();
             meshFilter.mesh = mesh;
-        }
-
-        public float GetWaveHeight(float _x)
-        {
-            return amplitude * Mathf.Sin(_x / waveLength + offset);
         }
     }
 }
