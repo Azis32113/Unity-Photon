@@ -19,19 +19,6 @@ public class InputManager : SimulationBehaviour, IBeforeUpdate, INetworkRunnerCa
             accumulatedInput = default;
         }
 
-        if (Input.anyKey && Cursor.lockState != CursorLockMode.Locked)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-        else if (!Input.anyKey && Cursor.lockState == CursorLockMode.Locked) {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
-
-        // accumulate input only if the cursor is locked.
-        if (Cursor.lockState != CursorLockMode.Locked) return;
-
         NetworkButtons buttons = default;
 
         float direction = 0;
