@@ -428,7 +428,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &333480025
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -456,7 +456,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RunnerPrefab: {fileID: 965196407}
-  StartMode: 0
+  StartMode: 1
   AutoStartAs: 2
   AutoHideGUI: 1
   AutoClients: 1
@@ -1269,7 +1269,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &965196406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1418,7 +1418,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &970858584
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1465,7 +1465,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60009301a588a08418564096b9d2be88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvasGroup: {fileID: 0}
 --- !u!1 &1078771186
 GameObject:
   m_ObjectHideFlags: 0
@@ -1675,7 +1674,9 @@ MonoBehaviour:
   btnJoin: {fileID: 187926209}
   btnConnect: {fileID: 1285184224}
   btnEnter: {fileID: 183672653}
-  btnPrev: {fileID: 1095350370}
+  btnBack: {fileID: 1095350370}
+  inputField: {fileID: 672238297}
+  Runner: {fileID: 965196407}
 --- !u!4 &1127451300
 Transform:
   m_ObjectHideFlags: 0
@@ -2281,7 +2282,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1459926683
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2317,7 +2318,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60009301a588a08418564096b9d2be88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvasGroup: {fileID: 0}
 --- !u!225 &1459926685
 CanvasGroup:
   m_ObjectHideFlags: 0
