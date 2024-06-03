@@ -2,17 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
-using Fusion.Sockets;
-using LowPolyWater;
-using System.Linq;
-using System.Transactions;
+using TMPro;
+using System;
 
 public class PlayerBoat : NetworkBehaviour
 {
+    [SerializeField] TextMeshProUGUI playerNameTMP; 
     Rigidbody rb;
     [SerializeField] Transform camTarget;
     [SerializeField] private int rotateSpeed = 2;
     [SerializeField] private int moveSpeed = 15;
+
+    [Networked(OnChanged = nameof(OnNickNameChanged))]
+    public NetworkString<_16> nickName { get; set; }
 
     private void Awake() 
     {
@@ -40,6 +42,30 @@ public class PlayerBoat : NetworkBehaviour
 
     public override void Spawned()
     {
-        if (HasInputAuthority) CameraFollow.Instance.SetTarget(camTarget);
+        if (HasInputAuthority) 
+        {
+            CameraFollow.Instance.SetTarget(camTarget);
+
+            RPC_SetNickName(PlayerPrefs.GetString(Constants.Data.PLAYER_NICK_NAME));
+        }
+    }
+
+    private static void OnNickNameChanged(Changed<PlayerBoat> changed)
+    {
+        Debug.Log($"{Time.time} ONHPChanged value {changed.Behaviour.nickName}");
+        changed.Behaviour.OnNickNameChanged();
+    }
+
+    private void OnNickNameChanged()
+    {
+        Debug.Log($"Nickname changed for player to {nickName} for player {gameObject.name}");
+        playerNameTMP.text = nickName.ToString();
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_SetNickName(string nickName, RpcInfo info = default)
+    {
+        Debug.Log($"[RPC] SetNickName {nickName}");
+        this.nickName = nickName;
     }
 }

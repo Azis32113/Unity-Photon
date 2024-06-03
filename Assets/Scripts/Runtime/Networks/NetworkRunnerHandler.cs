@@ -13,14 +13,12 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     [SerializeField] private Transform[] _playerSpawnPosition;
     
-    [Networked, Capacity(12)] private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters { get => default; set{}} 
+    private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new();
     private NetworkRunner _runner;
 
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-
-        if (_spawnedCharacters == null) _spawnedCharacters = new(); 
     }
 
     public async void StartGame(GameMode mode)
@@ -68,6 +66,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
             NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
             Debug.Log("Player Spawned");
+            
             // Keep track of the player avatars so we can remove it when they disconnect
             _spawnedCharacters.Add(player, networkPlayerObject);
         }
