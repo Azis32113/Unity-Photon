@@ -23,7 +23,6 @@ public class App : MonoBehaviour
     [SerializeField] private TMP_InputField inputField;
 
     private GameMode gameMode;
-    public NetworkRunner Runner;
 
     private void Awake() {
         uiStart.Init();
