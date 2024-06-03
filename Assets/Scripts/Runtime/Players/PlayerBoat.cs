@@ -5,11 +5,14 @@ using Fusion;
 using Fusion.Sockets;
 using LowPolyWater;
 using System.Linq;
+using System.Transactions;
 
 public class PlayerBoat : NetworkBehaviour
 {
     Rigidbody rb;
     [SerializeField] Transform camTarget;
+    [SerializeField] private int rotateSpeed = 2;
+    [SerializeField] private int moveSpeed = 15;
 
     private void Awake() 
     {
@@ -25,17 +28,14 @@ public class PlayerBoat : NetworkBehaviour
 
         float movement = 0;
 
-        Vector3 rotate = new Vector3(0, input.Horizontal, 0);
-        transform.Rotate(rotate * 2f, Space.Self);
-
-        movement += Mathf.Abs(input.Horizontal * 0.3f);
-
-
         // if (input.Buttons.IsSet(MyButtons.Fire)){ /*do fire*/ }
         if (input.Buttons.IsSet(InputButton.Forward)){ movement += 1; }
         if (input.Buttons.IsSet(InputButton.Backward)){ movement -= 0.2f; }
 
-        rb.velocity = Vector3.Lerp(rb.velocity, 12f * movement * transform.forward, Time.fixedDeltaTime);  
+        rb.velocity = Vector3.Lerp(rb.velocity, moveSpeed * movement * transform.forward, Time.fixedDeltaTime);
+
+        Vector3 rotationSpeed = new Vector3(0, rotateSpeed * Mathf.Clamp(rb.velocity.magnitude * input.Horizontal, -1, 1), 0);
+        transform.Rotate(rotationSpeed, Space.Self);
     }
 
     public override void Spawned()

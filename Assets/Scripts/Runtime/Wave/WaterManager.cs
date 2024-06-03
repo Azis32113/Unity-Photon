@@ -18,7 +18,7 @@ public class WaterManager : NetworkBehaviour
         for (int i = 0; i < vertices.Length; i++)
         {
             vertices[i].y = WaveManager.Instance.GetWaveHeight(transform.position.x + vertices[i].x);
-        }    
+        }
 
         meshFilter.mesh.vertices = vertices;
         meshFilter.mesh.RecalculateNormals();   
