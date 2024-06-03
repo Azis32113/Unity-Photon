@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,6 +12,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     [SerializeField] private Transform[] _playerSpawnPosition;
+    
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
 
     private void Awake() {
@@ -48,7 +50,10 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) {}    
 
-    public void OnInput(NetworkRunner runner, NetworkInput input) {}    
+    public void OnInput(NetworkRunner runner, NetworkInput input) 
+    {
+        input.Set(InputHandler.GetInput());
+    }    
 
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) {}    
 
@@ -59,7 +64,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
             // Create a unique position for the player
             int randNum = UnityEngine.Random.Range(0, _playerSpawnPosition.Length);
             Vector3 spawnPosition = _playerSpawnPosition[randNum].position;
-            
+
             NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
             Debug.Log("Player Spawned");
             // Keep track of the player avatars so we can remove it when they disconnect
@@ -88,4 +93,6 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) {}    
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) {}
+
+    
 }
