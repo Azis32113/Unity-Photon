@@ -13,6 +13,7 @@ public class WaterManager : NetworkBehaviour
 
     public override void Render()
     {
+        if (WaveManager.Instance == null) return;
         Vector3[] vertices = meshFilter.mesh.vertices;
         for (int i = 0; i < vertices.Length; i++)
         {
