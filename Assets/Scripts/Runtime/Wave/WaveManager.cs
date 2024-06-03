@@ -11,7 +11,8 @@ public class WaveManager : NetworkBehaviour
 
     [Networked] public float Offset { get => default; set{} }
 
-    private void Awake() {
+    public override void Spawned()
+    {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }

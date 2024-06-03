@@ -23,7 +23,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 
             CameraFollow.Instance.SetTarget(camTarget);
 
-            RPC_SetNickName(PlayerPrefs.GetString(Constants.Data.PLAYER_NICK_NAME));
+            RPC_SetNickName(PlayerPrefs.GetString(Constants.LocalData.PLAYER_NICK_NAME));
             
             Debug.Log("Spawned Local Player");
         }

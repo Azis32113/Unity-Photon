@@ -37,6 +37,7 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
         {
             Debug.Log("OnPlayerJoined, we are server. spawning player");
             runner.Spawn(playerPrefab, Utils.GetRandomPosition(), Quaternion.identity, player);
+            Debug.Log("Player Spawned!");
         }
         else Debug.Log("OnPlayerJoined");
     }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Fusion;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class App : MonoBehaviour
@@ -20,7 +21,8 @@ public class App : MonoBehaviour
     [SerializeField] private Button btnBack;
 
     [Header("Input Field Configs")]
-    [SerializeField] private TMP_InputField inputField;
+    [SerializeField] private TMP_InputField serverInputField;
+    [SerializeField] private TMP_InputField nameInputField;
 
     private GameMode gameMode;
 
@@ -54,10 +56,13 @@ public class App : MonoBehaviour
         SetGameMode(GameMode.AutoHostOrClient);
     }
 
-    private async void OnEnterRoom()
+    private void OnEnterRoom()
     {
         if (GateUI(uiRoom)) {
-            await NetworkRunnerHandler.Instance.StartGame(gameMode);
+            PlayerPrefs.SetString(Constants.ServerData.GAME_MODE, gameMode.ToString());
+            PlayerPrefs.SetString(Constants.ServerData.SESSION_NAME, serverInputField.text);
+            PlayerPrefs.Save();
+            SceneManager.LoadSceneAsync(Constants.Scene.GAME);
         }
     }
 

@@ -15,16 +15,27 @@ public class NetworkRunnerHandler : MonoBehaviour
     private NetworkRunner _runner;
 
     private void Awake() {
-        if (Instance == null) Instance = this;
+        if (Instance == null) 
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         else Destroy(gameObject);
     }
 
     private void Start() {
         _runner = Instantiate(_networkRunnerPrefab);
         _runner.name = "Network Runner";
+        
+        
+        
+        Enum.TryParse(PlayerPrefs.GetString(Constants.ServerData.GAME_MODE), out GameMode gameMode);
+        string sessionName = PlayerPrefs.GetString(Constants.ServerData.SESSION_NAME);
+
+        var clientTask = InitializeNetworkRunner(_runner, gameMode, NetAddress.Any(), SceneManager.GetActiveScene().buildIndex, sessionName, null);
     }
 
-    protected virtual Task InitializeNetworkRunner(NetworkRunner runner, GameMode gameMode, NetAddress address, SceneRef scene, Action<NetworkRunner> initialized)
+    protected virtual Task InitializeNetworkRunner(NetworkRunner runner, GameMode gameMode, NetAddress address, SceneRef scene, string sessionName, Action<NetworkRunner> initialized)
     {
         var sceneManager = runner.GetComponents(typeof(MonoBehaviour)).OfType<INetworkSceneManager>().FirstOrDefault();
 
@@ -40,14 +51,9 @@ public class NetworkRunnerHandler : MonoBehaviour
             GameMode = gameMode,
             Address = address,
             Scene = scene,
-            SessionName = "TestRoom",
+            SessionName = sessionName,
             Initialized = initialized,
             SceneManager = sceneManager
         });
-    }
-
-    public async Task StartGame(GameMode gameMode)
-    {
-        await InitializeNetworkRunner(_runner, gameMode, NetAddress.Any(), SceneManager.GetActiveScene().buildIndex, null);
     }
 }

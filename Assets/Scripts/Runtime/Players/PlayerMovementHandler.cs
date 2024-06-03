@@ -28,7 +28,6 @@ public class PlayerMovementHandler : NetworkBehaviour
         rb.velocity = Vector3.Lerp(rb.velocity, maxSpeed * movement * transform.forward, Time.fixedDeltaTime);
 
         Vector3 rotationSpeed = new Vector3(0, rotateSpeed * Mathf.Clamp(rb.velocity.magnitude / maxSpeed * input.Horizontal, -1, 1), 0);
-        Debug.Log(rb.velocity.magnitude);
         transform.Rotate(rotationSpeed, Space.Self);
     } 
 }

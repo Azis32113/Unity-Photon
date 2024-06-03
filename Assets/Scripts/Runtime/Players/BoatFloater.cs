@@ -13,6 +13,7 @@ public class BoatFloater : NetworkBehaviour {
 
     public override void FixedUpdateNetwork()
     {
+        if (WaveManager.Instance == null) return;
         rb.AddForceAtPosition(Physics.gravity / floatersAmount, transform.position, ForceMode.Acceleration);
         float waveHeight = WaveManager.Instance.GetWaveHeight(transform.position.x);
         if (transform.position.y < waveHeight)

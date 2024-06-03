@@ -1089,8 +1089,8 @@ MonoBehaviour:
   btnConnect: {fileID: 7632723626781554229}
   btnEnter: {fileID: 7632723625747116952}
   btnBack: {fileID: 7632723626711078071}
-  inputField: {fileID: 7632723626319439372}
-  Runner: {fileID: 0}
+  serverInputField: {fileID: 7632723626319439372}
+  nameInputField: {fileID: 0}
 --- !u!1 &7632723626711078068
 GameObject:
   m_ObjectHideFlags: 0
