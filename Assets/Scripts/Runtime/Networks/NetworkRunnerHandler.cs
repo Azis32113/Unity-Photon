@@ -13,12 +13,14 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     [SerializeField] private Transform[] _playerSpawnPosition;
     
-    private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
+    [Networked, Capacity(12)] private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters { get => default; set{}} 
     private NetworkRunner _runner;
 
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        if (_spawnedCharacters == null) _spawnedCharacters = new(); 
     }
 
     public async void StartGame(GameMode mode)
