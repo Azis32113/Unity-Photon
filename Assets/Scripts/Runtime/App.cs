@@ -57,7 +57,7 @@ public class App : MonoBehaviour
     private async void OnEnterRoom()
     {
         if (GateUI(uiRoom)) {
-            // NetworkRunnerHandler.Instance.StartGame(gameMode);
+            await NetworkRunnerHandler.Instance.StartGame(gameMode);
         }
     }
 

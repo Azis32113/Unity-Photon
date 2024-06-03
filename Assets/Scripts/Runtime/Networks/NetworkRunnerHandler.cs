@@ -10,15 +10,18 @@ using UnityEngine.SceneManagement;
 
 public class NetworkRunnerHandler : MonoBehaviour
 {
+    public static NetworkRunnerHandler Instance { get; private set;}
     [SerializeField] private NetworkRunner _networkRunnerPrefab;
-    
     private NetworkRunner _runner;
+
+    private void Awake() {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
 
     private void Start() {
         _runner = Instantiate(_networkRunnerPrefab);
         _runner.name = "Network Runner";
-
-        var clientTask = InitializeNetworkRunner(_runner, GameMode.AutoHostOrClient, NetAddress.Any(), SceneManager.GetActiveScene().buildIndex, null);
     }
 
     protected virtual Task InitializeNetworkRunner(NetworkRunner runner, GameMode gameMode, NetAddress address, SceneRef scene, Action<NetworkRunner> initialized)
@@ -41,5 +44,10 @@ public class NetworkRunnerHandler : MonoBehaviour
             Initialized = initialized,
             SceneManager = sceneManager
         });
+    }
+
+    public async Task StartGame(GameMode gameMode)
+    {
+        await InitializeNetworkRunner(_runner, gameMode, NetAddress.Any(), SceneManager.GetActiveScene().buildIndex, null);
     }
 }
