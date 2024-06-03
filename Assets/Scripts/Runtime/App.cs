@@ -58,21 +58,8 @@ public class App : MonoBehaviour
     private async void OnEnterRoom()
     {
         if (GateUI(uiRoom)) {
-            await Connect(inputField.text);
+            NetworkRunnerHandler.Instance.StartGame(gameMode);
         }
-    }
-
-    private async Task Connect(string SessionName)
-    {
-        var args = new StartGameArgs()
-        {
-            GameMode = gameMode,
-            SessionName = SessionName,
-            SceneManager = GetComponent<NetworkSceneManagerDefault>(),
-            Scene = 0
-
-        };
-        await Runner.StartGame(args);
     }
 
     private void OnBackToStart()

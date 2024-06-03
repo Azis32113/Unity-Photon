@@ -43,6 +43,7 @@ public class InputManager : SimulationBehaviour, IBeforeUpdate, INetworkRunnerCa
     public void OnDisconnectedFromServer(NetworkRunner runner){ }
 
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken){ }
+    
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
         input.Set(accumulatedInput);
@@ -70,7 +71,7 @@ public class InputManager : SimulationBehaviour, IBeforeUpdate, INetworkRunnerCa
 
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList){ }
 
-    public async void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
+    public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     { 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
