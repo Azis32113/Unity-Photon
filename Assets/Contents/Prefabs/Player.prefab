@@ -545,7 +545,7 @@ MonoBehaviour:
   WordOffset: 0
   WordCount: 0
   _interpolationDataSource: 0
-  playerNameTMP: {fileID: 0}
+  playerNameTMP: {fileID: 1512491000817303349}
   camTarget: {fileID: 1734059072839710817}
   _nickName:
     _length: 0
@@ -567,7 +567,8 @@ MonoBehaviour:
   WordCount: 0
   _interpolationDataSource: 0
   rotateSpeed: 2
-  moveSpeed: 15
+  maxSpeed: 15
+  angle: 0
 --- !u!1 &5278413268973397876
 GameObject:
   m_ObjectHideFlags: 0
