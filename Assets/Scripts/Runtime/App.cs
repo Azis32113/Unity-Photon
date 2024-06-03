@@ -52,13 +52,13 @@ public class App : MonoBehaviour
 
     private void OnSharedOption()
     {
-        SetGameMode(GameMode.Shared);
+        SetGameMode(GameMode.AutoHostOrClient);
     }
 
     private async void OnEnterRoom()
     {
         if (GateUI(uiRoom)) {
-            NetworkRunnerHandler.Instance.StartGame(gameMode);
+            // NetworkRunnerHandler.Instance.StartGame(gameMode);
         }
     }
 

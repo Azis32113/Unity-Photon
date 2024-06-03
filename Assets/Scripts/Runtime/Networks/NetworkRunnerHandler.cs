@@ -1,98 +1,45 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Fusion;
 using Fusion.Sockets;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
+public class NetworkRunnerHandler : MonoBehaviour
 {
-    public static NetworkRunnerHandler Instance { get; private set;}
-
-    [SerializeField] private NetworkPrefabRef _playerPrefab;
-    [SerializeField] private Transform[] _playerSpawnPosition;
+    [SerializeField] private NetworkRunner _networkRunnerPrefab;
     
-    private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new();
     private NetworkRunner _runner;
 
-    private void Awake() {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+    private void Start() {
+        _runner = Instantiate(_networkRunnerPrefab);
+        _runner.name = "Network Runner";
+
+        var clientTask = InitializeNetworkRunner(_runner, GameMode.AutoHostOrClient, NetAddress.Any(), SceneManager.GetActiveScene().buildIndex, null);
     }
 
-    public async void StartGame(GameMode mode)
+    protected virtual Task InitializeNetworkRunner(NetworkRunner runner, GameMode gameMode, NetAddress address, SceneRef scene, Action<NetworkRunner> initialized)
     {
-        // Create the Fusion runner and let it know that we will be providing user input
-        _runner = gameObject.AddComponent<NetworkRunner>();
-        _runner.ProvideInput = true;
+        var sceneManager = runner.GetComponents(typeof(MonoBehaviour)).OfType<INetworkSceneManager>().FirstOrDefault();
 
-        // Start or join (depends on gamemode) a session with a specific name
-        await _runner.StartGame(new StartGameArgs()
+        if (sceneManager == null)
         {
-            GameMode = mode,
+            // handle networked objects that already exists in the scene
+            sceneManager = runner.gameObject.AddComponent<NetworkSceneManagerDefault>();
+        }
+
+        runner.ProvideInput = true;
+
+        return runner.StartGame(new StartGameArgs{
+            GameMode = gameMode,
+            Address = address,
+            Scene = scene,
             SessionName = "TestRoom",
-            Scene = SceneManager.GetActiveScene().buildIndex,
-            SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+            Initialized = initialized,
+            SceneManager = sceneManager
         });
     }
-
-    public void OnConnectedToServer(NetworkRunner runner) {}    
-
-    public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) {}    
-
-    public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) {}    
-
-    public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) {}    
-
-    public void OnDisconnectedFromServer(NetworkRunner runner) {}    
-
-    public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) {}    
-
-    public void OnInput(NetworkRunner runner, NetworkInput input) 
-    {
-        input.Set(InputHandler.GetInput());
-    }    
-
-    public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) {}    
-
-    public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
-    {
-        if (runner.IsServer)
-        {
-            // Create a unique position for the player
-            int randNum = UnityEngine.Random.Range(0, _playerSpawnPosition.Length);
-            Vector3 spawnPosition = _playerSpawnPosition[randNum].position;
-
-            NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
-            Debug.Log("Player Spawned");
-            
-            // Keep track of the player avatars so we can remove it when they disconnect
-            _spawnedCharacters.Add(player, networkPlayerObject);
-        }
-    }   
-
-    public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
-    {
-        // Find and remove the players avatar
-        if (_spawnedCharacters.TryGetValue(player, out NetworkObject networkObject))
-        {
-            runner.Despawn(networkObject);
-            _spawnedCharacters.Remove(player);
-        }
-    } 
-
-    public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ArraySegment<byte> data) {}    
-
-    public void OnSceneLoadDone(NetworkRunner runner) {}    
-
-    public void OnSceneLoadStart(NetworkRunner runner) {}    
-
-    public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) {}    
-
-    public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) {}    
-
-    public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) {}
-
-    
 }
