@@ -62,7 +62,6 @@ public class App : MonoBehaviour
             PlayerPrefs.SetString(Constants.ServerData.GAME_MODE, gameMode.ToString());
             PlayerPrefs.SetString(Constants.ServerData.SESSION_NAME, serverInputField.text);
             PlayerPrefs.SetString(Constants.LocalData.PLAYER_NICK_NAME, nameInputField.text);
-            PlayerPrefs.Save();
             SceneManager.LoadSceneAsync(Constants.Scene.GAME);
         }
     }

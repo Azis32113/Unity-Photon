@@ -15,6 +15,8 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
     [Networked(OnChanged = nameof(OnNickNameChanged))]
     [HideInInspector] public NetworkString<_16> nickName { get; set; }
 
+    private bool isPublicJoinMessageSent = false;
+
     public override void Spawned()
     {
         if (HasInputAuthority) 
@@ -29,6 +31,18 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
         }
 
         else Debug.Log("Spawned Remote Player");
+    }
+
+    public void PlayerLeft(PlayerRef player)
+    {
+        if (Object.HasStateAuthority)
+        {
+            NetworkInGameMessages.Instance.SendInGameRPCMessage(nickName.ToString(), "left");
+        }
+        if (player == Object.InputAuthority)
+        {
+            Runner.Despawn(Object);
+        }
     }
 
     private static void OnNickNameChanged(Changed<NetworkPlayer> changed)
@@ -48,13 +62,11 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
     {
         Debug.Log($"[RPC] SetNickName {nickName}");
         this.nickName = nickName;
-    }
 
-    public void PlayerLeft(PlayerRef player)
-    {
-        if (player == Object.InputAuthority)
+        if (!isPublicJoinMessageSent)
         {
-            Runner.Despawn(Object);
+            isPublicJoinMessageSent = true;
+            NetworkInGameMessages.Instance.SendInGameRPCMessage(nickName, "joined");
         }
     }
 }
