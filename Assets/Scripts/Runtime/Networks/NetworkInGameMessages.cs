@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
+using System;
 
 public class NetworkInGameMessages : NetworkBehaviour
 {
@@ -17,7 +18,7 @@ public class NetworkInGameMessages : NetworkBehaviour
 
     public void SendInGameRPCMessage(string userNickname, string message)
     {
-        RPC_InGameMessage($"<b>{userNickname}</b> {message}");
+        RPC_InGameMessage($"[{DateTime.Now:HH:mm:ss}] <b>{userNickname}</b> {message}");
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]

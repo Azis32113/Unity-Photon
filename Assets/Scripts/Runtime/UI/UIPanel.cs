@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
+using System;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class UIPanel : MonoBehaviour
@@ -11,11 +13,11 @@ public class UIPanel : MonoBehaviour
 
     public void Init()
     {
+        canvasGroup = GetComponent<CanvasGroup>();
         if (gameObject.activeInHierarchy) IsShowing = true;
         else IsShowing = false;
-        canvasGroup = GetComponent<CanvasGroup>();
     }
-    
+
     public void SetVisible(bool visible) 
     {
         if (IsShowing == visible) return;

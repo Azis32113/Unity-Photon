@@ -26,14 +26,16 @@ public class App : MonoBehaviour
 
     private GameMode gameMode;
 
-    private void Awake() {
+    private void Awake() 
+    {
         uiStart.Init();
         uiRoom.Init();
+
+        nameInputField.text = Utils.GetRandomName();
     }
 
-    private void Start() {
-        
-
+    private void Start()
+    {
         btnHost.onClick.AddListener(OnHostOption);
         btnJoin.onClick.AddListener(OnJoinOption);
         btnConnect.onClick.AddListener(OnSharedOption);
@@ -58,12 +60,11 @@ public class App : MonoBehaviour
 
     private void OnEnterRoom()
     {
-        if (GateUI(uiRoom)) {
-            PlayerPrefs.SetString(Constants.ServerData.GAME_MODE, gameMode.ToString());
-            PlayerPrefs.SetString(Constants.ServerData.SESSION_NAME, serverInputField.text);
-            PlayerPrefs.SetString(Constants.LocalData.PLAYER_NICK_NAME, nameInputField.text);
-            SceneManager.LoadSceneAsync(Constants.Scene.GAME);
-        }
+        PlayerPrefs.SetString(Constants.ServerData.GAME_MODE, gameMode.ToString());
+        PlayerPrefs.SetString(Constants.ServerData.SESSION_NAME, serverInputField.text);
+        PlayerPrefs.SetString(Constants.LocalData.PLAYER_NICK_NAME, nameInputField.text);
+        
+        SceneManager.LoadSceneAsync(Constants.Scene.GAME);
     }
 
     private void OnBackToStart()

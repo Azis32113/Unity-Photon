@@ -4,6 +4,7 @@ using UnityEngine;
 using Fusion;
 using TMPro;
 using Unity.VisualScripting;
+using System.Net;
 
 public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 {
@@ -16,6 +17,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
     [HideInInspector] public NetworkString<_16> nickName { get; set; }
 
     private bool isPublicJoinMessageSent = false;
+    private NetworkInGameMessages networkInGameMessages;
 
     public override void Spawned()
     {
@@ -26,18 +28,36 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
             CameraFollow.Instance.SetTarget(camTarget);
 
             RPC_SetNickName(PlayerPrefs.GetString(Constants.LocalData.PLAYER_NICK_NAME));
-            
+
+            networkInGameMessages = NetworkInGameMessages.Instance;
+
             Debug.Log("Spawned Local Player");
         }
 
-        else Debug.Log("Spawned Remote Player");
+        else 
+        {
+            // Set the player as a player object
+            Runner.SetPlayerObject(Object.InputAuthority, Object);
+
+            Debug.Log("Spawned Remote Player");
+        }
     }
 
     public void PlayerLeft(PlayerRef player)
     {
+        
+
         if (Object.HasStateAuthority)
         {
-            NetworkInGameMessages.Instance.SendInGameRPCMessage(nickName.ToString(), "left");
+            if (Runner.TryGetPlayerObject(player, out var playerLeftMetworkObject)) 
+            {
+                if (playerLeftMetworkObject == Object) 
+                {
+                    Debug.Log("Client logout");
+                    NetworkInGameMessages.Instance.SendInGameRPCMessage(playerLeftMetworkObject.GetComponent<NetworkPlayer>().nickName.ToString(), "left");
+                    // Local.networkInGameMessages.SendInGameRPCMessage(playerLeftMetworkObject.GetComponent<NetworkPlayer>().nickName.ToString(), "left");
+                }
+            }
         }
         if (player == Object.InputAuthority)
         {
