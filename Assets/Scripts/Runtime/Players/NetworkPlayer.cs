@@ -16,6 +16,8 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
     [Networked(OnChanged = nameof(OnNickNameChanged))]
     [HideInInspector] public NetworkString<_16> nickName { get; set; }
 
+    [Networked] public int token {get; set; }
+
     private bool isPublicJoinMessageSent = false;
     private NetworkInGameMessages networkInGameMessages;
 
