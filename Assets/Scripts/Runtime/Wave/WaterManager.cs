@@ -6,7 +6,7 @@ public class WaterManager : NetworkBehaviour
 {
     private MeshFilter meshFilter;
 
-    private void Awake() 
+    public override void Spawned()
     {
         meshFilter = GetComponent<MeshFilter>();
     }

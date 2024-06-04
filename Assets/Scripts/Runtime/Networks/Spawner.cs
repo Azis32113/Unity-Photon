@@ -1,14 +1,13 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
-using UnityEngine.Diagnostics;
 
 public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
 {
     public NetworkPlayer playerPrefab;
+    public NetworkObject seaPrefab;
 
     // Mapping between token id and re-created players
     Dictionary<int, NetworkPlayer> mapTokenIDWithNetworkPlayer;
