@@ -27,15 +27,66 @@ public class NetworkRunnerHandler : MonoBehaviour
         _runner = Instantiate(_networkRunnerPrefab);
         _runner.name = "Network Runner";
         
-        
-        
         Enum.TryParse(PlayerPrefs.GetString(Constants.ServerData.GAME_MODE), out GameMode gameMode);
         string sessionName = PlayerPrefs.GetString(Constants.ServerData.SESSION_NAME);
 
         var clientTask = InitializeNetworkRunner(_runner, gameMode, NetAddress.Any(), SceneManager.GetActiveScene().buildIndex, sessionName, null);
+
+        Debug.Log($"Server NetworkRunner Started");
+    }
+
+    public void StartHostMigtration(HostMigrationToken hostMigrationToken)
+    {
+        _runner = Instantiate(_networkRunnerPrefab);
+        _runner.name = "Network Runner - Migrated";
+
+        var clientTask = InitializeNetworkRunnerHostMigration(_runner, hostMigrationToken);
+        
+        Debug.Log($"Host Migration Started");
     }
 
     protected virtual Task InitializeNetworkRunner(NetworkRunner runner, GameMode gameMode, NetAddress address, SceneRef scene, string sessionName, Action<NetworkRunner> initialized)
+    {
+        INetworkSceneManager sceneManager = GetSceneManager(runner);
+
+        runner.ProvideInput = true;
+
+        return runner.StartGame(new StartGameArgs
+        {
+            GameMode = gameMode,
+            Address = address,
+            Scene = scene,
+            SessionName = sessionName,
+            Initialized = initialized,
+            SceneManager = sceneManager
+        });
+    }
+
+    protected virtual Task InitializeNetworkRunnerHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
+    {
+        INetworkSceneManager sceneManager = GetSceneManager(runner);
+
+        runner.ProvideInput = true;
+
+        return runner.StartGame(new StartGameArgs
+        {
+            // GameMode = gameMode,
+            // Address = address,
+            // Scene = scene,
+            // SessionName = sessionName,
+            // Initialized = initialized,
+            SceneManager = sceneManager,
+            HostMigrationToken = hostMigrationToken, // contains all necessary info to restart the Runner
+            HostMigrationResume = HostMigrationResume //  this will be invoked to resume the simulation
+        });
+    }
+
+    private void HostMigrationResume(NetworkRunner runner) 
+    {
+        
+    }
+
+    private INetworkSceneManager GetSceneManager(NetworkRunner runner)
     {
         var sceneManager = runner.GetComponents(typeof(MonoBehaviour)).OfType<INetworkSceneManager>().FirstOrDefault();
 
@@ -45,15 +96,10 @@ public class NetworkRunnerHandler : MonoBehaviour
             sceneManager = runner.gameObject.AddComponent<NetworkSceneManagerDefault>();
         }
 
-        runner.ProvideInput = true;
-
-        return runner.StartGame(new StartGameArgs{
-            GameMode = gameMode,
-            Address = address,
-            Scene = scene,
-            SessionName = sessionName,
-            Initialized = initialized,
-            SceneManager = sceneManager
-        });
+        return sceneManager;
     }
+
+
+
+    
 }

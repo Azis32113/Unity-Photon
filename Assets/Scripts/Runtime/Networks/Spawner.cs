@@ -20,7 +20,16 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnDisconnectedFromServer(NetworkRunner runner) { Debug.Log("OnDisconnectFromServer"); }
 
-    public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { Debug.Log("OnHostMigration"); }
+    public async void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) 
+    {
+        Debug.Log("OnHostMigration");
+
+        // shut down the current runner
+        await runner.Shutdown(shutdownReason: ShutdownReason.HostMigration);
+
+        // find the network runner handler and start the host migration
+        NetworkRunnerHandler.Instance.StartHostMigtration(hostMigrationToken);
+    }
 
     public void OnInput(NetworkRunner runner, NetworkInput input) { 
         if (NetworkPlayer.Local != null)
