@@ -2,6 +2,7 @@ using Fusion;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(NetworkObject))]
 public class WaterManager : NetworkBehaviour 
 {
     private MeshFilter meshFilter;

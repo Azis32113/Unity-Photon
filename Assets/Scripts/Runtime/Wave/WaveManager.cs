@@ -1,6 +1,7 @@
 using Fusion;
 using UnityEngine;
 
+[RequireComponent(typeof(NetworkObject))]
 public class WaveManager : NetworkBehaviour 
 {
     public static WaveManager Instance;
@@ -9,7 +10,7 @@ public class WaveManager : NetworkBehaviour
     [SerializeField] float waveSpeed = 0.5f;
     [SerializeField] float waveLength = 0.75f;
 
-    [Networked] public float Offset { get => default; set{} }
+    [HideInInspector][Networked] public float Offset { get => default; set{} }
 
     public override void Spawned()
     {

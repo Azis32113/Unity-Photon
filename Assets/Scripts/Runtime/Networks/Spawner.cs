@@ -6,11 +6,17 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
 {
-    public NetworkPlayer playerPrefab;
-    public NetworkObject seaPrefab;
+    [SerializeField] private NetworkPlayer playerPrefab;
+    [SerializeField] private WaveManager wavePrefab;
+    [SerializeField] private WaterManager waterPrefab;
+    [SerializeField] private NetworkInGameMessages networkInGameMessagesPrefab;
 
     // Mapping between token id and re-created players
-    Dictionary<int, NetworkPlayer> mapTokenIDWithNetworkPlayer;
+    private Dictionary<int, NetworkPlayer> mapTokenIDWithNetworkPlayer;
+    
+    private WaveManager spawnedWaveManager = default;
+    private WaterManager spawnedWaterManager = default;
+    private NetworkInGameMessages spawnedNetworkInGameMessages = default;
 
     private void Awake() {
         mapTokenIDWithNetworkPlayer = new Dictionary<int, NetworkPlayer>();
@@ -67,8 +73,23 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         if (runner.IsServer)
         {
+            if (spawnedWaveManager == null)
+            {
+                spawnedWaveManager = runner.Spawn(wavePrefab);
+            }
+
+            if (spawnedWaterManager == null)
+            {
+                spawnedWaterManager = runner.Spawn(waterPrefab);
+            }
+
+            if (spawnedNetworkInGameMessages == null)
+            {
+                spawnedNetworkInGameMessages = runner.Spawn(networkInGameMessagesPrefab);
+            }
+            
             // Get the token for the player
-            int playerToken = GetPlayerToken(runner, player);
+            int playerToken = GetPlayerToken(runner, player);           
 
             Debug.Log($"OnPlayerJoined, we are server. Connection token {playerToken}");
 
@@ -87,9 +108,10 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
                 spawnedNetworkPlayer.token = playerToken;
 
                 // Store the mapping between playerToken and the spawned network player
-                mapTokenIDWithNetworkPlayer[playerToken] = spawnedNetworkPlayer;
-            }
+                mapTokenIDWithNetworkPlayer.Add(playerToken, spawnedNetworkPlayer);
+            }            
         }
+        
         else Debug.Log("OnPlayerJoined");
     }
 
@@ -107,9 +129,44 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { Debug.Log("OnUserSimulationMessage"); }
 
+    public void OnHostMigrationCleanUp()
+    {
+        Debug.Log("Spawner OnHostMigrationCleanUp Started...");
+
+        // Checking Player Clone
+        foreach (var entry in mapTokenIDWithNetworkPlayer)
+        {
+            NetworkObject networkObjectInDictionary = entry.Value.GetComponent<NetworkObject>();
+            
+            if (networkObjectInDictionary.InputAuthority.IsNone)
+            {
+                Debug.Log($"{Time.time} Found player that has not reconnected. Despawning {entry.Value.nickName}");
+
+                networkObjectInDictionary.Runner.Despawn(networkObjectInDictionary);
+            }
+        }
+
+        Debug.Log("Spawner OnHostMigrationCleanUp Completed");
+    }
+
     public void SetConnectionTokenMapping(int token, NetworkPlayer networkPlayer)
     {
         mapTokenIDWithNetworkPlayer.Add(token, networkPlayer);
+    }
+
+    public void RemoveConnectionTokenMapping(int token)
+    {
+        mapTokenIDWithNetworkPlayer.Remove(token);
+    }
+
+    public void SetConnectionWaveManager(WaveManager waveManager)
+    {
+        spawnedWaveManager = waveManager;
+    }
+
+    public void SetConnectionWaterManager(WaterManager waterManager)
+    {
+        spawnedWaterManager = waterManager;
     }
 
 

@@ -10,7 +10,7 @@ public class NetworkInGameMessages : NetworkBehaviour
 
     [SerializeField] private InGameMessageUIHandler inGameMessageUIHandler;
 
-    private void Awake() 
+    public override void Spawned()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);

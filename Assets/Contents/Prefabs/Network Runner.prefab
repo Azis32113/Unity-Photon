@@ -58,3 +58,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 311834617678685338, guid: 4bb2c745adc318e4ba234b896d8ee088, type: 3}
+  wavePrefab: {fileID: 153275430993307637, guid: 26b2a93e59d73084bbd84c86cef4221f, type: 3}
+  waterPrefab: {fileID: 3058027686152542848, guid: 13425064c2954884cbcbfa5099d17f14, type: 3}
+  networkInGameMessagesPrefab: {fileID: 6649339514149108533, guid: e2eab8730c591ad4dbc8a76fe090028e, type: 3}

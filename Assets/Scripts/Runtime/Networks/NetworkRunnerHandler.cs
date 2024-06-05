@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Fusion;
 using Fusion.Sockets;
@@ -90,9 +92,11 @@ public class NetworkRunnerHandler : MonoBehaviour
         // get a reference for each Network Object from the old Host
         foreach (var resumeNetworkObject in runner.GetResumeSnapshotNetworkObjects())
         {
+            Debug.Log($"Checking: {resumeNetworkObject.Name}");
             // grab all player objects, movement component
             if (resumeNetworkObject.TryGetBehaviour<PlayerMovementHandler>(out var movementHandler))
             {
+                Debug.Log("Found Player in Old Host");
                 runner.Spawn(resumeNetworkObject, position: movementHandler.transform.position, rotation: movementHandler.transform.rotation, onBeforeSpawned: (runner, newNetworkObject) => 
                 {
                     newNetworkObject.CopyStateFrom(resumeNetworkObject);
@@ -105,7 +109,33 @@ public class NetworkRunnerHandler : MonoBehaviour
                     }
                 });
             }
+
+            if (resumeNetworkObject.TryGetBehaviour<WaterManager>(out var waterManager))
+            {
+                runner.Spawn(resumeNetworkObject, position: waterManager.transform.position, rotation: waterManager.transform.rotation, onBeforeSpawned: (runner, newNetworkObject) => 
+                {
+                    newNetworkObject.CopyStateFrom(resumeNetworkObject);
+
+                    // Store Water Manager to Spawner
+                    FindObjectOfType<Spawner>().SetConnectionWaterManager(waterManager);
+                });
+            }
+
+            if (resumeNetworkObject.TryGetBehaviour<WaveManager>(out var waveManager))
+            {
+                runner.Spawn(resumeNetworkObject, position: waveManager.transform.position, rotation: waveManager.transform.rotation, onBeforeSpawned: (runner, newNetworkObject) => 
+                {
+                    newNetworkObject.CopyStateFrom(resumeNetworkObject);
+
+                    // Store Wave Manager to Spawner
+                    FindObjectOfType<Spawner>().SetConnectionWaveManager(waveManager);
+                });
+            }
+
+            
         }
+
+        FindObjectOfType<Spawner>().OnHostMigrationCleanUp();
 
         Debug.Log("HostMigrationResume Completed");
     }

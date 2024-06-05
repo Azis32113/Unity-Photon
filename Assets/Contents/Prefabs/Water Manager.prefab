@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3058027686152542849}
   - component: {fileID: 3058027686152542848}
   m_Layer: 0
-  m_Name: Ocean
+  m_Name: Water Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -19,7 +19,6 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
     [Networked] public int token {get; set; }
 
     private bool isPublicJoinMessageSent = false;
-    private NetworkInGameMessages networkInGameMessages;
 
     public override void Spawned()
     {
@@ -31,24 +30,19 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 
             RPC_SetNickName(PlayerPrefs.GetString(Constants.LocalData.PLAYER_NICK_NAME));
 
-            networkInGameMessages = NetworkInGameMessages.Instance;
-
-            Debug.Log("Spawned Local Player");
+            Debug.Log($"Spawned Local Player");
         }
-
         else 
         {
             // Set the player as a player object
             Runner.SetPlayerObject(Object.InputAuthority, Object);
 
-            Debug.Log("Spawned Remote Player");
+            Debug.Log($"Spawned Remote Player");
         }
     }
 
     public void PlayerLeft(PlayerRef player)
     {
-        
-
         if (Object.HasStateAuthority)
         {
             if (Runner.TryGetPlayerObject(player, out var playerLeftMetworkObject)) 
@@ -57,10 +51,11 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
                 {
                     Debug.Log("Client logout");
                     NetworkInGameMessages.Instance.SendInGameRPCMessage(playerLeftMetworkObject.GetComponent<NetworkPlayer>().nickName.ToString(), "left");
-                    // Local.networkInGameMessages.SendInGameRPCMessage(playerLeftMetworkObject.GetComponent<NetworkPlayer>().nickName.ToString(), "left");
+                    FindObjectOfType<Spawner>().RemoveConnectionTokenMapping(token);
                 }
             }
         }
+
         if (player == Object.InputAuthority)
         {
             Runner.Despawn(Object);
@@ -69,7 +64,7 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 
     private static void OnNickNameChanged(Changed<NetworkPlayer> changed)
     {
-        Debug.Log($"{Time.time} ONHPChanged value {changed.Behaviour.nickName}");
+        Debug.Log($"{Time.time} OnNicknameChanged value {changed.Behaviour.nickName}");
         changed.Behaviour.OnNickNameChanged();
     }
 
